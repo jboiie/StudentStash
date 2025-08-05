@@ -5,7 +5,11 @@ function App() {
   const [amount, setAmount] = useState('');
   const [status, setStatus] = useState('');
   const [history, setHistory] = useState([]);
-  const [goal, setGoal] = useState(1000);
+  const [goal, setGoal] = useState(() => {
+    // Load saved goal from localStorage
+    const savedGoal = localStorage.getItem('goal');
+    return savedGoal ? parseFloat(savedGoal) : 1000;
+  });
   const [goalInput, setGoalInput] = useState('');
 
   useEffect(() => {
@@ -73,6 +77,7 @@ function App() {
       return;
     }
     setGoal(value);
+    localStorage.setItem('goal', value); // Save to localStorage
     setGoalInput('');
     setStatus(`🎯 Goal set to ₹${value}`);
   };
