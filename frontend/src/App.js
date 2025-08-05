@@ -1,275 +1,131 @@
-import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { useState } from "react";
+import Dashboard from "./pages/Dashboard";
 
-function App() {
-  const [total, setTotal] = useState(0);
-  const [amount, setAmount] = useState("");
-  const [status, setStatus] = useState("");
-  const [history, setHistory] = useState([]);
-  const [goal, setGoal] = useState(1000);
-  const [goalInput, setGoalInput] = useState("");
+function Login({ onLogin, isLoggedIn }) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  if (isLoggedIn) {
+    return <Navigate to="/dashboard" />;
+  }
 
-  const loadData = async () => {
-    const totalRes = await fetch("http://localhost:3001/api/total");
-    const totalData = await totalRes.json();
-    setTotal(totalData.total);
+  const handleLogin = async () => {
+    try {
+      const res = await fetch("http://localhost:3001/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+      const data = await res.json();
 
-    const historyRes = await fetch("http://localhost:3001/api/history");
-    const historyData = await historyRes.json();
-    setHistory(historyData.history || []);
-
-    const savedGoal = localStorage.getItem("goal");
-    if (savedGoal) setGoal(parseFloat(savedGoal));
-  };
-
-  const handleSave = async () => {
-    const value = parseFloat(amount);
-    if (isNaN(value) || value <= 0) {
-      setStatus("❌ Invalid amount");
-      return;
+      if (data.success) {
+        onLogin();
+      } else {
+        setError(data.message || "Login failed");
+      }
+    } catch (err) {
+      setError("Error connecting to server");
     }
-
-    await fetch("http://localhost:3001/api/save", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: value }),
-    });
-
-    setAmount("");
-    setStatus(`✅ Saved ₹${value}`);
-    loadData();
-  };
-
-  const handleClear = async () => {
-    if (!window.confirm("Clear all data?")) return;
-
-    await fetch("http://localhost:3001/api/clear", { method: "POST" });
-    setStatus("🧹 Cleared");
-    loadData();
-  };
-
-  const handleDownloadCSV = () => {
-    if (history.length === 0) {
-      alert("Nothing to download");
-      return;
-    }
-    let csv = "Amount,Date\n";
-    history.forEach((entry) => {
-      csv += `${entry.amount},${entry.time}\n`;
-    });
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "studentstash_history.csv";
-    a.click();
-    window.URL.revokeObjectURL(url);
-  };
-
-  const handleSetGoal = () => {
-    const value = parseFloat(goalInput);
-    if (isNaN(value) || value <= 0) {
-      setStatus("❌ Enter a valid goal");
-      return;
-    }
-    setGoal(value);
-    localStorage.setItem("goal", value);
-    setGoalInput("");
-    setStatus(`🎯 Goal set to ₹${value}`);
-  };
-
-  const formatDate = (iso) => new Date(iso).toLocaleString();
-  const percent = Math.min(100, Math.floor((total / goal) * 100));
-
-  const buttonStyle = {
-    padding: "0.5rem 1rem",
-    border: "none",
-    borderRadius: 8,
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-  };
-
-  const hoverEffect = {
-    boxShadow: "0px 0px 12px rgba(255,255,255,0.5)",
-    transform: "scale(1.05)",
   };
 
   return (
     <div
       style={{
-        padding: 20,
-        fontFamily: "sans-serif",
-        background: "linear-gradient(135deg, #0f172a, #1e1b4b, #3b0764)",
-        color: "white",
-        minHeight: "100vh",
+        height: "100vh",
+        background: "linear-gradient(135deg, #0a0f2c, #1a1447, #3b0764)",
         display: "flex",
-        flexDirection: "column",
+        justifyContent: "center",
         alignItems: "center",
+        fontFamily: "sans-serif",
+        color: "white",
       }}
     >
-      <h1 style={{ color: "#a78bfa", fontSize: "2.5rem" }}>💰 StudentStash</h1>
-      <p style={{ fontSize: "1.2rem" }}>
-        <strong>Total Saved:</strong> ₹{total}
-      </p>
-
-      {/* Goal Tracker */}
       <div
         style={{
-          margin: "1rem 0",
-          background: "#312e81",
-          padding: "1rem",
+          background: "rgba(49, 46, 129, 0.9)",
+          padding: "2rem",
           borderRadius: "10px",
+          boxShadow: "0px 0px 20px rgba(255, 255, 255, 0.2)",
+          textAlign: "center",
           width: "300px",
         }}
       >
-        <p>🎯 Goal: ₹{goal}</p>
-        <div style={{ height: 20, background: "#1e293b", borderRadius: 5 }}>
-          <div
-            style={{
-              width: `${percent}%`,
-              height: "100%",
-              background: percent >= 100 ? "#22c55e" : "#3b82f6",
-              borderRadius: 5,
-              transition: "width 0.5s ease",
-            }}
-          />
-        </div>
-        <p>{percent}% of goal reached</p>
-      </div>
-
-      {/* Goal Input */}
-      <div style={{ marginBottom: "1rem" }}>
+        <h1 style={{ color: "#a78bfa" }}>🔐 Login</h1>
         <input
-          type="number"
-          placeholder="Set your goal (₹)"
-          value={goalInput}
-          onChange={(e) => setGoalInput(e.target.value)}
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           style={{
             padding: "0.5rem",
-            borderRadius: 8,
+            width: "100%",
+            marginBottom: "1rem",
+            borderRadius: "8px",
             border: "none",
             outline: "none",
-            width: "200px",
+          }}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{
+            padding: "0.5rem",
+            width: "100%",
+            marginBottom: "1rem",
+            borderRadius: "8px",
+            border: "none",
+            outline: "none",
           }}
         />
         <button
-          onMouseOver={(e) => Object.assign(e.target.style, hoverEffect)}
-          onMouseOut={(e) =>
-            Object.assign(e.target.style, {
-              boxShadow: "none",
-              transform: "scale(1)",
-            })
-          }
-          onClick={handleSetGoal}
+          onClick={handleLogin}
           style={{
-            ...buttonStyle,
-            marginLeft: 10,
+            padding: "0.5rem 1rem",
             background: "#6366f1",
             color: "white",
-          }}
-        >
-          Set Goal
-        </button>
-      </div>
-
-      {/* Actions */}
-      <div style={{ marginBottom: "1.5rem" }}>
-        <input
-          type="number"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="Amount"
-          style={{
-            padding: "0.5rem",
-            borderRadius: 8,
             border: "none",
-            outline: "none",
-            width: "200px",
+            borderRadius: "8px",
+            cursor: "pointer",
+            width: "100%",
+            transition: "0.3s",
           }}
-        />
-        <button
-          onMouseOver={(e) => Object.assign(e.target.style, hoverEffect)}
-          onMouseOut={(e) =>
-            Object.assign(e.target.style, {
-              boxShadow: "none",
-              transform: "scale(1)",
-            })
-          }
-          onClick={handleSave}
-          style={{
-            ...buttonStyle,
-            marginLeft: 10,
-            background: "#10b981",
-            color: "white",
+          onMouseOver={(e) => {
+            e.target.style.background = "#4f46e5";
+          }}
+          onMouseOut={(e) => {
+            e.target.style.background = "#6366f1";
           }}
         >
-          Save
+          Login
         </button>
-        <button
-          onMouseOver={(e) => Object.assign(e.target.style, hoverEffect)}
-          onMouseOut={(e) =>
-            Object.assign(e.target.style, {
-              boxShadow: "none",
-              transform: "scale(1)",
-            })
-          }
-          onClick={handleClear}
-          style={{
-            ...buttonStyle,
-            marginLeft: 10,
-            background: "#ef4444",
-            color: "white",
-          }}
-        >
-          Clear
-        </button>
-        <button
-          onMouseOver={(e) => Object.assign(e.target.style, hoverEffect)}
-          onMouseOut={(e) =>
-            Object.assign(e.target.style, {
-              boxShadow: "none",
-              transform: "scale(1)",
-            })
-          }
-          onClick={handleDownloadCSV}
-          style={{
-            ...buttonStyle,
-            marginLeft: 10,
-            background: "#3b82f6",
-            color: "white",
-          }}
-        >
-          Download CSV
-        </button>
+        {error && <p style={{ color: "#f87171", marginTop: "1rem" }}>{error}</p>}
       </div>
-
-      <p style={{ color: "#94a3b8" }}>{status}</p>
-
-      {/* History */}
-      <h2 style={{ color: "#a78bfa" }}>📜 History</h2>
-      {history.length === 0 ? (
-        <p>No history yet.</p>
-      ) : (
-        <ul style={{ listStyle: "none", padding: 0 }}>
-          {history.map((h, i) => (
-            <li
-              key={i}
-              style={{
-                background: "#312e81",
-                padding: "0.5rem",
-                borderRadius: 6,
-                marginBottom: "0.5rem",
-              }}
-            >
-              ₹{h.amount} on {formatDate(h.time)}
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
+  );
+}
+
+function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  return (
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={<Login onLogin={() => setIsLoggedIn(true)} isLoggedIn={isLoggedIn} />}
+        />
+        <Route
+          path="/dashboard"
+          element={
+            isLoggedIn ? <Dashboard /> : <Navigate to="/" />
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
 
