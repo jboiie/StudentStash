@@ -1,45 +1,39 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
 
-export default function Navbar() {
-  const location = useLocation();
+const navStyle = {
+  display: "flex",
+  gap: "32px",
+  background: "#18162b",
+  padding: "1.5rem 2rem",
+  borderRadius: "16px",
+  alignItems: "center",
+};
 
-  const navItems = [
-    { name: "Dashboard", path: "/" },
-    { name: "History", path: "/history" },
-    { name: "Profile", path: "/profile" },
-    { name: "Leaderboard", path: "/leaderboard" }
-  ];
+const activeTab = {
+  background: "#6d28d9",
+  color: "#fff",
+};
 
+export default function Navbar({ active = "Dashboard" }) {
+  const tabs = ["Dashboard", "Challenges", "Rewards", "Leaderboard", "Learn"];
   return (
-    <nav style={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-around",
-      padding: "1rem",
-      background: "linear-gradient(90deg, #1e1b4b, #0f172a)",
-      color: "white",
-      boxShadow: "0 2px 10px rgba(0,0,0,0.5)"
-    }}>
-      {navItems.map((item) => (
-        <Link
-          key={item.path}
-          to={item.path}
+    <nav style={navStyle}>
+      {tabs.map(tab => (
+        <div
+          key={tab}
           style={{
-            textDecoration: "none",
-            color: location.pathname === item.path ? "#a78bfa" : "white",
-            fontWeight: location.pathname === item.path ? "bold" : "normal",
-            padding: "0.5rem 1rem",
-            borderRadius: "8px",
-            transition: "all 0.3s ease",
-            background:
-              location.pathname === item.path
-                ? "rgba(167, 139, 250, 0.2)"
-                : "transparent"
+            padding: "7px 22px",
+            borderRadius: "10px",
+            fontWeight: 600,
+            color: "#fff",
+            background: active === tab ? activeTab.background : "transparent",
+            boxShadow: active === tab ? "0 0 8px #6d28d9" : "none",
+            cursor: "pointer",
+            border: "none"
           }}
         >
-          {item.name}
-        </Link>
+          {tab}
+        </div>
       ))}
     </nav>
   );
