@@ -15,7 +15,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Helper: Get data from Firebase (always with defaults)
+// Helper: Get data from Firebase
 async function getData() {
   const snapshot = await db.ref('studentstash').once('value');
   const data = snapshot.val() || {};
@@ -35,6 +35,15 @@ app.get('/api/ping', (req, res) => {
   res.json({ message: 'Backend is working with Firebase!' });
 });
 
+// Hardcoded login for demo
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
+  if (username === 'admin' && password === '1234') {
+    return res.json({ success: true, message: 'Login successful' });
+  }
+  return res.status(401).json({ success: false, message: 'Invalid credentials' });
+});
+
 // Save money
 app.post('/api/save', async (req, res) => {
   let { amount } = req.body;
@@ -49,7 +58,6 @@ app.post('/api/save', async (req, res) => {
   data.history.push({ amount, time: new Date().toISOString() });
 
   await saveData(data);
-  console.log("💾 Saved to Firebase:", data);
   res.json({ total: data.totalSaved });
 });
 
@@ -68,7 +76,6 @@ app.get('/api/history', async (req, res) => {
 // Clear all savings
 app.post('/api/clear', async (req, res) => {
   await saveData({ totalSaved: 0, history: [] });
-  console.log("🧹 Cleared all savings");
   res.json({ message: 'Cleared' });
 });
 
