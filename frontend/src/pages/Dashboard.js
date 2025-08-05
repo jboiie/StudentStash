@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Card from "../components/Card";
 import ProgressBar from "../components/ProgressBar";
-import ChallengeCard from "../components/ChallengeCard";
-import Leaderboard from "../components/Leaderboard";
 
-function Dashboard() {
+export default function Dashboard({ user = "Student" }) {
   const [total, setTotal] = useState(0);
   const [amount, setAmount] = useState("");
   const [status, setStatus] = useState("");
@@ -14,6 +13,7 @@ function Dashboard() {
   const [goalInput, setGoalInput] = useState("");
   const [streak, setStreak] = useState(7);
   const [growth, setGrowth] = useState(12);
+  const navigate = useNavigate();
 
   useEffect(() => { loadData(); }, []);
 
@@ -93,19 +93,21 @@ function Dashboard() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        fontFamily: "'Inter','Montserrat',Arial,sans-serif"
       }}
     >
-      <Navbar />
+      
       <div style={{ maxWidth: "900px", width: "100%" }}>
         {/* HEADER */}
         <div style={{ textAlign: "center", margin: "36px 0 16px" }}>
           <h1 style={{
             color: "#a78bfa",
             fontSize: "2.65rem",
-            fontWeight: 700,
-            marginBottom: "-4px"
+            fontWeight: 800,
+            marginBottom: "-4px",
+            textShadow: "0 3px 20px #784ff044"
           }}>
-            Welcome back, Student! <span role="img" aria-label="grape">🍇</span>
+            Welcome back, {user}! <span role="img" aria-label="grape">🍇</span>
           </h1>
           <p style={{ color: "#bdb9d0", fontSize: "1.15rem" }}>Keep building those saving habits!</p>
         </div>
@@ -206,8 +208,93 @@ function Dashboard() {
           marginBottom: "34px",
           flexWrap: "wrap"
         }}>
-          <ChallengeCard />
-          <Leaderboard />
+          {/* Daily Challenge Card with neon style */}
+          <div style={{
+            background: "linear-gradient(110deg,#f76af3 10%,#8bf6fd 120%)",
+            borderRadius: 18,
+            boxShadow: "0 0 8px #43e97b33, 0 3px 18px #a78bfa18",
+            color: "#231241",
+            minWidth: 300,
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            padding: "1.35rem 1.7rem 1.2rem 2rem",
+            marginBottom: 12
+          }}>
+            <div>
+              <span role="img" aria-label="challenge" style={{ fontSize: "1.2rem" }}>🎯</span>
+              <span style={{ fontWeight: 700, fontSize: "1.11rem", marginLeft: 7 }}>Daily Challenge</span>
+              <div style={{
+                color: "#422254",
+                fontWeight: 600,
+                margin: "9px 0 7px",
+                fontSize: "1rem"
+              }}>
+                Save ₹25 and earn 50 points!
+              </div>
+            </div>
+            <button
+              style={{
+                background: "linear-gradient(90deg,#41e895,#a78bfa 120%)",
+                color: "#18162b",
+                fontWeight: 700,
+                borderRadius: 15,
+                border: "none",
+                fontSize: "1rem",
+                padding: ".8rem 2.2rem",
+                marginTop: 6,
+                boxShadow: "0 2px 13px #41e89553",
+                cursor: "pointer"
+              }}
+              onClick={() => navigate("/challenges")}
+            >
+              Start Challenge
+            </button>
+          </div>
+          {/* Leaderboard Card with neon style */}
+          <div style={{
+            background: "linear-gradient(90deg,#84ff83 10%,#f9fe7f 120%)",
+            borderRadius: 18,
+            boxShadow: "0 0 8px #43e97b33, 0 3px 18px #a78bfa18",
+            color: "#191a2d",
+            minWidth: 300,
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            padding: "1.35rem 1.7rem 1.2rem 2rem",
+            marginBottom: 12
+          }}>
+            <div>
+              <span role="img" aria-label="leaderboard" style={{ fontSize: "1.15rem" }}>🏆</span>
+              <span style={{ fontWeight: 700, fontSize: "1.08rem", marginLeft: 7 }}>Leaderboard</span>
+              <div style={{
+                color: "#426e34",
+                fontWeight: 600,
+                margin: "11px 0 7px",
+                fontSize: "1rem"
+              }}>
+                You're rank #5 this week!
+              </div>
+            </div>
+            <button
+              style={{
+                background: "linear-gradient(90deg,#6ee7b7,#a78bfa 85%)",
+                color: "#191a2d",
+                fontWeight: 700,
+                borderRadius: 15,
+                border: "none",
+                fontSize: "1rem",
+                padding: ".8rem 2.2rem",
+                marginTop: 6,
+                boxShadow: "0 2px 13px #41fca122",
+                cursor: "pointer"
+              }}
+              onClick={() => navigate("/leaderboard")}
+            >
+              View Rankings
+            </button>
+          </div>
         </div>
         {/* HISTORY */}
         <div style={{
@@ -234,7 +321,7 @@ function Dashboard() {
                     marginBottom: "0.62rem",
                   }}
                 >
-                  ₹{h.amount} on {new Date(h.time).toLocaleString()}
+                  ₹{h.amount} on {new Date(h.time || h.date).toLocaleString()}
                 </li>
               ))}
             </ul>
@@ -277,5 +364,3 @@ const quickBtnStyle = {
   marginRight: "4px",
   transition: "0.12s all"
 };
-
-export default Dashboard;

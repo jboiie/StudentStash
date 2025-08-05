@@ -1,220 +1,180 @@
-import Navbar from "../components/Navbar";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 
-export const challengeList = [
+// Example challenges data
+const challengeList = [
   {
-    id: "morning-saver",
+    id: 1,
+    emoji: "🌞",
     title: "Morning Saver",
     desc: "Save ₹10 before 10 AM",
-    type: "Daily",
-    progress: 100,
     points: 25,
-    completed: true,
+    type: "Daily"
   },
   {
-    id: "lunch-money-challenge",
+    id: 2,
+    emoji: "🍱",
     title: "Lunch Money Challenge",
-    desc: "Save ₹30 instead of buying lunch.",
-    type: "Daily",
-    progress: 0,
+    desc: "Save ₹50 instead of buying lunch",
     points: 100,
-    completed: false,
+    type: "Daily"
   },
   {
-    id: "week-warrior",
+    id: 3,
+    emoji: "⚔️",
     title: "Week Warrior",
-    desc: "Save every day for 7 days straight.",
-    type: "Weekly",
-    progress: 71,
+    desc: "Save every day for 7 days straight",
     points: 500,
-    completed: false,
+    type: "Weekly"
   },
   {
-    id: "coffee-shop-skip",
+    id: 4,
+    emoji: "☕",
     title: "Coffee Shop Skip",
-    desc: "Skip expensive coffee 5 times this week.",
-    type: "Weekly",
-    progress: 67,
+    desc: "Skip expensive coffee 3 times this week",
     points: 150,
-    completed: false,
+    type: "Weekly"
   },
   {
-    id: "monthly-marathon",
+    id: 5,
+    emoji: "🔥",
     title: "Monthly Marathon",
-    desc: "Save ₹1000 this month.",
-    type: "Monthly",
-    progress: 35,
+    desc: "Save ₹1000 this month",
     points: 1000,
-    completed: false,
-  },
+    type: "Monthly"
+  }
 ];
 
-export default function Challenges() {
-  const navigate = useNavigate();
+export default function Challenges({ user }) {
+  const [completed, setCompleted] = useState([]);
+
+  useEffect(() => {
+    setCompleted(JSON.parse(localStorage.getItem(`completed_challenges_${user}`) || "[]"));
+
+    function onStorage(event) {
+      if (!event || event.key === null || event.key === `completed_challenges_${user}`) {
+        setCompleted(JSON.parse(localStorage.getItem(`completed_challenges_${user}`) || "[]"));
+      }
+    }
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [user]);
+
+  function handleCompleteChallenge(ch) {
+    if (completed.includes(ch.id)) return;
+    const updatedCompleted = [...completed, ch.id];
+    setCompleted(updatedCompleted);
+    localStorage.setItem(`completed_challenges_${user}`, JSON.stringify(updatedCompleted));
+    // award points
+    const prevPoints = parseInt(localStorage.getItem(`points_${user}`) || "0", 10);
+    const updatedPoints = prevPoints + ch.points;
+    localStorage.setItem(`points_${user}`, updatedPoints);
+    window.dispatchEvent(new Event("storage"));
+  }
 
   return (
-    <div
-      className="fade-in-page"
-      style={{
-        background: "#18162b",
-        minHeight: "100vh",
-        padding: "36px 0",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <Navbar />
-      <div style={{
-        maxWidth: 680,
-        width: "100%",
-        margin: "0 auto"
-      }}>
-        <div style={{ marginBottom: 28 }}>
-          <h1 style={{
-            color: "#a78bfa",
-            fontWeight: 700,
-            fontSize: "2.1rem",
-            textAlign: "center"
-          }}>
-            Savings Challenges <span role="img" aria-label="grape">🍇</span>
-          </h1>
-          <p style={{ color: "#bdb9d0", textAlign: "center" }}>
-            Complete challenges to earn points and build habits!
-          </p>
-        </div>
-        <div style={{
-          display: "flex", gap: "13px", justifyContent: "center", marginBottom: "18px"
-        }}>
-          {["All Challenges", "Daily", "Weekly", "Monthly"].map(f => (
-            <span key={f}
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: "38px 16px", color: "#fff" }}>
+      <h1 style={{ color: "#a78bfa", fontSize: "2rem", fontWeight: 800 }}>
+        Savings Challenges <span role="img" aria-label="apple">🍏</span>
+      </h1>
+      <div style={{ color: "#b6b6db", marginBottom: 22 }}>
+        Complete challenges to earn points and build habits!
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
+        {challengeList.map(ch => {
+          const isDone = completed.includes(ch.id);
+          return (
+            <div
+              key={ch.id}
               style={{
-                background: f === "All Challenges" ? "#513ecb" : "#23214f",
-                color: "#eee",
-                borderRadius: 12,
-                fontWeight: 600,
-                padding: "6px 19px",
-                cursor: "pointer",
-                fontSize: "0.96rem"
-              }}>{f}</span>
-          ))}
-        </div>
-        {challengeList.map(challenge => (
-          <div
-            key={challenge.id}
-            style={{
-              margin: "19px 0",
-              background: "#202036",
-              borderRadius: "15px",
-              boxShadow: "0 2px 14px #16151a22",
-              border: challenge.completed ? "2px solid #34d399" : "1.5px solid #23214f",
-              cursor: "pointer",
-              padding: "1.2rem 1.7rem",
-              transition: "box-shadow .15s",
-              position: "relative",
-            }}
-            onClick={() => navigate(`/challenges/${challenge.id}`)}
-          >
-            <div style={{
-              display: "flex", alignItems: "center", marginBottom: 7
-            }}>
-              <span style={{
-                fontWeight: 700, fontSize: "1.17rem", color: "#fff"
-              }}>{challenge.title}</span>
-              <span style={{
-                marginLeft: "auto",
-                background: "#23214f",
-                color: "#a78bfa",
-                borderRadius: 7,
-                fontSize: ".93rem",
-                padding: "2px 15px",
-                fontWeight: 600
-              }}>{challenge.type}</span>
-            </div>
-            <div style={{ color: "#cfccf7", marginBottom: 15, fontSize: ".99rem" }}>
-              {challenge.desc}
-            </div>
-            <div style={{ marginBottom: 9 }}>
-              <span style={{ fontSize: ".95rem", color: "#bdb9d0" }}>Progress</span>
-              <div style={{
-                height: 12, borderRadius: 8, margin: "4px 0", background: "#2d2957"
-              }}>
-                <div style={{
-                  width: `${challenge.progress}%`,
-                  height: "100%",
-                  borderRadius: 8,
-                  background: challenge.completed
-                    ? "#34d399"
-                    : "linear-gradient(90deg, #a78bfa, #34d399)",
-                  transition: "width 0.5s"
-                }} />
-              </div>
-            </div>
-            <div style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between"
-            }}>
-              <span style={{
-                color: "#6ee7b7", fontWeight: 700, fontSize: ".98rem"
-              }}>
-                {challenge.points} pts {challenge.completed ? "✓ Completed" : ""}
-              </span>
-              {challenge.completed ? (
-                <div style={{
-                  background: "#34d39911",
-                  color: "#22c55e",
-                  padding: "8px 18px",
-                  borderRadius: 8,
-                  fontWeight: "bold"
-                }}>Completed!</div>
-              ) : (
-                <button style={{
-                  padding: ".48rem 1.6rem",
-                  background: "#a78bfa",
-                  color: "#23214f",
+                background: "#202036",
+                padding: "1.65rem 2.2rem",
+                borderRadius: 16,
+                boxShadow: isDone
+                  ? "0 0 0 2.3px #41fa8f, 0 2px 24px #1affa455"
+                  : "0 0 0 2px #232047",
+                border: "1.5px solid #232047",
+                marginBottom: 0
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 13, marginBottom: 7 }}>
+                <span style={{ fontSize: "1.6rem" }}>{ch.emoji}</span>
+                <span style={{
+                  fontWeight: 800, fontSize: "1.18rem", letterSpacing: ".01em"
+                }}>{ch.title}</span>
+                <span style={{
+                  background: ch.type === "Daily"
+                    ? "#6a90fa"
+                    : ch.type === "Weekly"
+                      ? "#1affa4"
+                      : "#a78bfa",
+                  color: "#fff",
+                  marginLeft: 10,
+                  padding: "3px 15px",
                   fontWeight: 700,
-                  border: "none",
-                  borderRadius: "7px",
-                  cursor: "pointer",
-                  fontSize: "1rem"
+                  borderRadius: 22,
+                  fontSize: ".96rem",
+                  boxShadow: "0 0 0 2px #232047"
+                }}>{ch.type}</span>
+              </div>
+              <div style={{
+                color: "#bbeae3", fontWeight: 600, marginLeft: 44, marginBottom: 8
+              }}>
+                {ch.desc}
+              </div>
+              {/* Progress Bar */}
+              <div style={{ marginLeft: 44, marginTop: 2, marginBottom: 12, width: "75%" }}>
+                <div style={{
+                  width: "100%",
+                  height: 10,
+                  background: "#232047",
+                  borderRadius: 6,
+                  overflow: "hidden"
                 }}>
-                  Start Challenge
-                </button>
-              )}
+                  <div
+                    style={{
+                      height: "100%",
+                      background: isDone
+                        ? "linear-gradient(90deg,#41fa8f 50%,#a78bfa 120%)"
+                        : "linear-gradient(90deg,#332769 80%,#232047 120%)",
+                      width: isDone ? "100%" : "0%",
+                      transition: "width 0.6s"
+                    }}
+                  ></div>
+                </div>
+              </div>
+              <div style={{
+                marginLeft: 44,
+                marginBottom: 14, color: "#53fca1", fontWeight: 700
+              }}>
+                {ch.points} pts
+              </div>
+              <button
+                disabled={isDone}
+                style={{
+                  marginLeft: 44,
+                  marginTop: 8,
+                  fontWeight: 700,
+                  padding: ".60em 1.41em",
+                  borderRadius: 10,
+                  border: "none",
+                  background: isDone
+                    ? "linear-gradient(90deg,#232047,#232047 100%)"
+                    : "linear-gradient(90deg,#41fa8f,#a78bfa 120%)",
+                  color: isDone
+                    ? "#a78bfa"
+                    : "#18162b",
+                  fontSize: ".99rem",
+                  cursor: isDone ? "not-allowed" : "pointer",
+                  boxShadow: !isDone ? "0 1.5px 8px #41fa8f33" : undefined,
+                  transition: "background .14s"
+                }}
+                onClick={() => handleCompleteChallenge(ch)}
+              >
+                {isDone ? "Completed ✔" : "Complete Challenge"}
+              </button>
             </div>
-            <span style={{
-              position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 1
-            }} />
-          </div>
-        ))}
-        <div style={{
-          margin: "32px auto 0",
-          background: "linear-gradient(95deg, #a78bfa, #34d399)",
-          borderRadius: "16px",
-          padding: "2.1rem 0",
-          color: "#fff",
-          width: "100%",
-          textAlign: "center",
-        }}>
-          <div style={{ fontWeight: 700, fontSize: "1.18rem", marginBottom: 8 }}>
-            Create Your Own Challenge
-          </div>
-          <div style={{ opacity: 0.86, marginBottom: "13px", fontSize: ".99rem" }}>
-            Set a personal savings goal and timeline
-          </div>
-          <button style={{
-            background: "#23214f",
-            color: "#a78bfa",
-            fontWeight: 700,
-            border: "none",
-            borderRadius: "7px",
-            padding: ".6rem 2.3rem",
-            fontSize: "1rem"
-          }}>
-            Create Challenge
-          </button>
-        </div>
+          );
+        })}
       </div>
     </div>
   );

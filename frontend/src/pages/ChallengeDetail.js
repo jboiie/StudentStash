@@ -1,148 +1,41 @@
-import Navbar from "../components/Navbar";
+import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { challengeList } from "./Challenges";
+import challengeList from "../data/challengeList";
 
 export default function ChallengeDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const challenge = challengeList.find(c => c.id === id);
+  const challenge = challengeList.find(c => String(c.id) === String(id));
 
-  // The enhanced back button, used below:
-  const backButton = (
-    <button
-      onClick={() => navigate(-1)}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "7px",
-        marginBottom: 32,
-        background: "none",
-        border: "none",
-        color: "#a78bfa",
-        fontWeight: 600,
-        fontSize: "1.14rem",
-        cursor: "pointer",
-        padding: "0.3rem 0.8rem",
-        transition: "color 0.2s, background 0.2s",
-        borderRadius: "8px"
-      }}
-      onMouseOver={e => {
-        e.target.style.background = "#312e81";
-        e.target.style.color = "#fff";
-      }}
-      onMouseOut={e => {
-        e.target.style.background = "none";
-        e.target.style.color = "#a78bfa";
-      }}
-    >
-      <span style={{ fontSize: "1.2em" }}>←</span>
-      Back to Challenges
-    </button>
-  );
-
-  if (!challenge)
+  if (!challenge) {
     return (
-      <div className="fade-in-page" style={{
-        background: "#18162b",
-        minHeight: "100vh",
-        color: "white",
-        textAlign: "center",
-        padding: 60
-      }}>
-        <Navbar />
-        {backButton}
-        Challenge not found!
+      <div style={{ color: "#fff", padding: "2rem" }}>
+        <h2>Challenge not found</h2>
+        <button
+          style={{ marginTop: 20, padding: "0.7rem 1.1rem", fontWeight: 700, borderRadius: 8, cursor: "pointer" }}
+          onClick={() => navigate(-1)}
+        >Back</button>
       </div>
     );
+  }
 
   return (
-    <div className="fade-in-page" style={{
-      background: "#18162b",
-      minHeight: "100vh",
-      padding: "36px 0",
-      color: "white",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center"
-    }}>
-      <Navbar />
-      {backButton}
-      <div style={{
-        maxWidth: 520,
-        width: "100%",
-        background: "#202036",
-        borderRadius: 22,
-        padding: "2.6rem 2.2rem",
-        boxShadow: "0 4px 24px #0002"
-      }}>
-        <h1 style={{
-          fontSize: '2.05em',
-          color: "#a78bfa",
-          marginBottom: '11px',
-          fontWeight: 700
-        }}>
-          {challenge.title}
-        </h1>
-        <p style={{ color: "#bdb9d0", marginBottom: "22px" }}>{challenge.desc}</p>
-        <div style={{ marginBottom: "32px" }}>
-          <strong>Type:</strong>{" "}
-          <span style={{
-            background: "#23214f",
-            color: "#a78bfa",
-            borderRadius: 7,
-            padding: "2px 13px",
-            fontWeight: 600,
-            fontSize: ".93rem"
-          }}>{challenge.type}</span>
-        </div>
-        <div style={{ marginBottom: "24px" }}>
-          <strong>Progress:</strong>
-          <div style={{
-            height: 14,
-            borderRadius: 8,
-            marginTop: 5,
-            background: "#23214f"
-          }}>
-            <div style={{
-              width: challenge.progress + "%",
-              height: "100%",
-              borderRadius: 8,
-              background: "linear-gradient(90deg, #a78bfa, #34d399)",
-              transition: "width 0.5s"
-            }} />
-          </div>
-          <div style={{ color: "#6ee7b7", marginTop: 5 }}>{challenge.progress}%</div>
-        </div>
-        <div style={{ marginBottom: "18px" }}>
-          <strong>Points:</strong> {challenge.points}
-        </div>
-        {challenge.completed ? (
-          <div style={{
-            background: "#34d39944",
-            color: "#22c55e",
-            padding: "10px 20px",
-            borderRadius: 12,
-            textAlign: "center",
-            fontWeight: 600
-          }}>
-            🎉 Completed!
-          </div>
-        ) : (
-          <button style={{
-            padding: ".75rem 2.5rem",
-            background: "#a78bfa",
-            color: "#23214f",
-            fontWeight: 700,
-            border: "none",
-            borderRadius: "10px",
-            marginTop: "20px",
-            cursor: "pointer",
-            fontSize: "1.1rem"
-          }}>
-            Start Challenge
-          </button>
-        )}
+    <div style={{ maxWidth: 600, margin: "50px auto", background: "#151326", borderRadius: 15, boxShadow: "0 2px 20px #7b30f522", padding: "2.3rem 2rem", color: "#fff" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        <span style={{ fontSize: "2.1rem" }}>{challenge.emoji}</span>
+        <h2 style={{ color: "#b688f7", margin: 0 }}>{challenge.title}</h2>
       </div>
+      <p style={{ color: "#d9e5ff", marginTop: 13, fontSize: "1.13rem" }}>{challenge.desc}</p>
+      <div style={{ color: "#9ff4d1", fontWeight: 600, margin: "15px 0 8px", fontSize: "1.05rem" }}>
+        Challenge Type: <span style={{ color: "#fff" }}>{challenge.type}</span>
+      </div>
+      <div style={{ color: "#53fca1", fontWeight: 700, fontSize: "1.18rem" }}>
+        Points: {challenge.points}
+      </div>
+      <button
+        style={{ marginTop: 27, padding: "0.7rem 1.1rem", fontWeight: 700, borderRadius: 8, cursor: "pointer", border: "none", background: "#8456f7", color: "#fff", fontSize: "1.08rem" }}
+        onClick={() => navigate(-1)}
+      >Back to Challenges</button>
     </div>
   );
 }
