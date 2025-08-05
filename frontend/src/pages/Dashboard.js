@@ -96,7 +96,6 @@ export default function Dashboard({ user = "Student" }) {
         fontFamily: "'Inter','Montserrat',Arial,sans-serif"
       }}
     >
-      
       <div style={{ maxWidth: "900px", width: "100%" }}>
         {/* HEADER */}
         <div style={{ textAlign: "center", margin: "36px 0 16px" }}>
@@ -200,7 +199,8 @@ export default function Dashboard({ user = "Student" }) {
           </div>
           {status && <p style={{ color: "#94a3b8", textAlign: "center" }}>{status}</p>}
         </div>
-        {/* CHALLENGE & LEADERBOARD */}
+        
+        {/* CHALLENGE & LEADERBOARD (THEMED VERSION) */}
         <div style={{
           display: "flex",
           gap: "32px",
@@ -208,42 +208,35 @@ export default function Dashboard({ user = "Student" }) {
           marginBottom: "34px",
           flexWrap: "wrap"
         }}>
-          {/* Daily Challenge Card with neon style */}
+          {/* Daily Challenge Card - themed */}
           <div style={{
-            background: "linear-gradient(110deg,#f76af3 10%,#8bf6fd 120%)",
-            borderRadius: 18,
-            boxShadow: "0 0 8px #43e97b33, 0 3px 18px #a78bfa18",
-            color: "#231241",
+            background: "#202036",
+            border: "2px solid #a78bfa",
+            borderRadius: "17px",
+            boxShadow: "0 2px 21px #a78bfa42",
+            color: "#fff",
             minWidth: 300,
             flex: 1,
             display: "flex",
             flexDirection: "column",
-            padding: "1.35rem 1.7rem 1.2rem 2rem",
+            padding: "1.38rem 2.1rem 1.2rem 2.1rem",
             marginBottom: 12
           }}>
-            <div>
-              <span role="img" aria-label="challenge" style={{ fontSize: "1.2rem" }}>🎯</span>
-              <span style={{ fontWeight: 700, fontSize: "1.11rem", marginLeft: 7 }}>Daily Challenge</span>
-              <div style={{
-                color: "#422254",
-                fontWeight: 600,
-                margin: "9px 0 7px",
-                fontSize: "1rem"
-              }}>
-                Save ₹25 and earn 50 points!
-              </div>
+            <div style={{ fontWeight: 800, color: "#a78bfa", fontSize: "1.14rem", marginBottom: 11, letterSpacing: ".01em" }}>
+              Daily Challenge <span role="img" aria-label="challenge">🎯</span>
             </div>
+            <div style={{ color: "#bbeae3", fontWeight: 600, fontSize: "1.08rem", marginBottom: 4 }}>Save ₹25 and earn 50 points!</div>
             <button
               style={{
                 background: "linear-gradient(90deg,#41e895,#a78bfa 120%)",
                 color: "#18162b",
                 fontWeight: 700,
-                borderRadius: 15,
+                borderRadius: "13px",
                 border: "none",
                 fontSize: "1rem",
                 padding: ".8rem 2.2rem",
-                marginTop: 6,
-                boxShadow: "0 2px 13px #41e89553",
+                marginTop: 9,
+                boxShadow: "0 2px 13px #a78bfa33",
                 cursor: "pointer"
               }}
               onClick={() => navigate("/challenges")}
@@ -251,43 +244,40 @@ export default function Dashboard({ user = "Student" }) {
               Start Challenge
             </button>
           </div>
-          {/* Leaderboard Card with neon style */}
+
+          {/* Leaderboard Card - themed */}
           <div style={{
-            background: "linear-gradient(90deg,#84ff83 10%,#f9fe7f 120%)",
-            borderRadius: 18,
-            boxShadow: "0 0 8px #43e97b33, 0 3px 18px #a78bfa18",
-            color: "#191a2d",
+            background: "#202036",
+            border: "2px solid #fed661",
+            borderRadius: "17px",
+            boxShadow: "0 2px 21px #fed66145",
+            color: "#fff",
             minWidth: 300,
             flex: 1,
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            padding: "1.35rem 1.7rem 1.2rem 2rem",
+            padding: "1.38rem 2.1rem 1.2rem 2.1rem",
             marginBottom: 12
           }}>
-            <div>
-              <span role="img" aria-label="leaderboard" style={{ fontSize: "1.15rem" }}>🏆</span>
-              <span style={{ fontWeight: 700, fontSize: "1.08rem", marginLeft: 7 }}>Leaderboard</span>
-              <div style={{
-                color: "#426e34",
-                fontWeight: 600,
-                margin: "11px 0 7px",
-                fontSize: "1rem"
-              }}>
-                You're rank #5 this week!
-              </div>
+            <div style={{ fontWeight: 800, color: "#fed661", fontSize: "1.12rem", marginBottom: 13, letterSpacing: ".01em" }}>
+              Leaderboard <span role="img" aria-label="leaderboard">🏆</span>
             </div>
+            <div style={{
+              fontWeight: 600, color: "#bbeae3", fontSize: "1.06rem",
+              marginBottom: 6
+            }}>You're rank #5 this week!</div>
             <button
               style={{
-                background: "linear-gradient(90deg,#6ee7b7,#a78bfa 85%)",
-                color: "#191a2d",
+                background: "linear-gradient(90deg,#fed661,#a78bfa 85%)",
+                color: "#232047",
                 fontWeight: 700,
-                borderRadius: 15,
+                borderRadius: "13px",
                 border: "none",
                 fontSize: "1rem",
                 padding: ".8rem 2.2rem",
-                marginTop: 6,
-                boxShadow: "0 2px 13px #41fca122",
+                marginTop: 7,
+                boxShadow: "0 2px 13px #fed66145",
                 cursor: "pointer"
               }}
               onClick={() => navigate("/leaderboard")}
@@ -296,6 +286,7 @@ export default function Dashboard({ user = "Student" }) {
             </button>
           </div>
         </div>
+
         {/* HISTORY */}
         <div style={{
           background: "#202036",
