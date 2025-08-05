@@ -36,3 +36,20 @@
     transform: rotate(360deg);
   }
 }
+
+/* === FADE-IN PAGE TRANSITION === */
+@keyframes fadeInPage {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.fade-in-page {
+  animation: fadeInPage 0.7s;
+}
+
+/* === BUTTON HOVER EFFECTS FOR POLISH === */
+button:hover {
+  filter: brightness(1.1);
+  transform: scale(1.05);
+  transition: 0.18s;
+}

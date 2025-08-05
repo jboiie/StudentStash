@@ -7,16 +7,56 @@ export default function ChallengeDetail() {
   const navigate = useNavigate();
   const challenge = challengeList.find(c => c.id === id);
 
+  // The enhanced back button, used below:
+  const backButton = (
+    <button
+      onClick={() => navigate(-1)}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "7px",
+        marginBottom: 32,
+        background: "none",
+        border: "none",
+        color: "#a78bfa",
+        fontWeight: 600,
+        fontSize: "1.14rem",
+        cursor: "pointer",
+        padding: "0.3rem 0.8rem",
+        transition: "color 0.2s, background 0.2s",
+        borderRadius: "8px"
+      }}
+      onMouseOver={e => {
+        e.target.style.background = "#312e81";
+        e.target.style.color = "#fff";
+      }}
+      onMouseOut={e => {
+        e.target.style.background = "none";
+        e.target.style.color = "#a78bfa";
+      }}
+    >
+      <span style={{ fontSize: "1.2em" }}>←</span>
+      Back to Challenges
+    </button>
+  );
+
   if (!challenge)
     return (
-      <div style={{ color: "white", textAlign: "center", padding: 60 }}>
+      <div className="fade-in-page" style={{
+        background: "#18162b",
+        minHeight: "100vh",
+        color: "white",
+        textAlign: "center",
+        padding: 60
+      }}>
         <Navbar />
+        {backButton}
         Challenge not found!
       </div>
     );
 
   return (
-    <div style={{
+    <div className="fade-in-page" style={{
       background: "#18162b",
       minHeight: "100vh",
       padding: "36px 0",
@@ -26,20 +66,7 @@ export default function ChallengeDetail() {
       alignItems: "center"
     }}>
       <Navbar />
-      <button
-        onClick={() => navigate(-1)}
-        style={{
-          marginBottom: 32,
-          color: "#bdb9d0",
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          fontSize: "1.05rem",
-          alignSelf: "flex-start"
-        }}
-      >
-        ← Back to Challenges
-      </button>
+      {backButton}
       <div style={{
         maxWidth: 520,
         width: "100%",

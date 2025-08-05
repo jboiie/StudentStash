@@ -6,7 +6,6 @@ import ChallengeCard from "../components/ChallengeCard";
 import Leaderboard from "../components/Leaderboard";
 
 function Dashboard() {
-  // Real state/data logic
   const [total, setTotal] = useState(0);
   const [amount, setAmount] = useState("");
   const [status, setStatus] = useState("");
@@ -16,9 +15,7 @@ function Dashboard() {
   const [streak, setStreak] = useState(7);
   const [growth, setGrowth] = useState(12);
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  useEffect(() => { loadData(); }, []);
 
   const loadData = async () => {
     const totalRes = await fetch("http://localhost:3001/api/total");
@@ -88,6 +85,7 @@ function Dashboard() {
 
   return (
     <div
+      className="fade-in-page"
       style={{
         background: "#18162b",
         minHeight: "100vh",
@@ -97,8 +95,7 @@ function Dashboard() {
         alignItems: "center",
       }}
     >
-      <Navbar active="Dashboard" />
-
+      <Navbar />
       <div style={{ maxWidth: "900px", width: "100%" }}>
         {/* HEADER */}
         <div style={{ textAlign: "center", margin: "36px 0 16px" }}>
@@ -112,7 +109,6 @@ function Dashboard() {
           </h1>
           <p style={{ color: "#bdb9d0", fontSize: "1.15rem" }}>Keep building those saving habits!</p>
         </div>
-
         {/* STATS */}
         <div style={{
           display: "flex",
@@ -126,7 +122,6 @@ function Dashboard() {
           <Card label="Streak" value={<span style={{ color: "#fde68a" }}>{streak} days</span>} />
           <Card label="Growth" value={<span style={{ color: "#34d399" }}>+{growth}%</span>} />
         </div>
-
         {/* GOAL INPUT */}
         <div style={{
           display: "flex",
@@ -161,7 +156,6 @@ function Dashboard() {
             Set Goal
           </button>
         </div>
-
         {/* PROGRESS & ACTIONS */}
         <div style={{
           background: "#202036",
@@ -178,9 +172,7 @@ function Dashboard() {
             fontSize: "1.17rem",
             textAlign: "center"
           }}>Today's Progress</div>
-
           <ProgressBar current={total} goal={goal} />
-
           <div style={{
             display: "flex",
             gap: "22px",
@@ -206,7 +198,6 @@ function Dashboard() {
           </div>
           {status && <p style={{ color: "#94a3b8", textAlign: "center" }}>{status}</p>}
         </div>
-
         {/* CHALLENGE & LEADERBOARD */}
         <div style={{
           display: "flex",
@@ -218,7 +209,6 @@ function Dashboard() {
           <ChallengeCard />
           <Leaderboard />
         </div>
-
         {/* HISTORY */}
         <div style={{
           background: "#202036",

@@ -1,7 +1,6 @@
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 
-// DEMO CHALLENGE DATA
 export const challengeList = [
   {
     id: "morning-saver",
@@ -54,14 +53,17 @@ export default function Challenges() {
   const navigate = useNavigate();
 
   return (
-    <div style={{
-      background: "#18162b",
-      minHeight: "100vh",
-      padding: "36px 0",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    }}>
+    <div
+      className="fade-in-page"
+      style={{
+        background: "#18162b",
+        minHeight: "100vh",
+        padding: "36px 0",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
       <Navbar />
       <div style={{
         maxWidth: 680,
