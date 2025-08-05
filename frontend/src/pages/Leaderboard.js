@@ -1,0 +1,17 @@
+import Navbar from "../components/Navbar";
+export default function Leaderboard() {
+  return (
+    <div style={{
+      background: "#18162b",
+      minHeight: "100vh",
+      color: "white",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      paddingTop: "40px"
+    }}>
+      <Navbar />
+      <h1>Leaderboard Page Coming Soon!</h1>
+    </div>
+  );
+}

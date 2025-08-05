@@ -1,4 +1,12 @@
-import React from "react";
+import { NavLink, useLocation } from "react-router-dom";
+
+const tabs = [
+  { name: "Dashboard", path: "/" },
+  { name: "Challenges", path: "/challenges" },
+  { name: "Rewards", path: "/rewards" },
+  { name: "Leaderboard", path: "/leaderboard" },
+  { name: "Learn", path: "/learn" },
+];
 
 const navStyle = {
   display: "flex",
@@ -7,33 +15,38 @@ const navStyle = {
   padding: "1.5rem 2rem",
   borderRadius: "16px",
   alignItems: "center",
+  justifyContent: "center",
+  marginBottom: "25px"
 };
 
-const activeTab = {
-  background: "#6d28d9",
+const tabStyle = {
+  padding: "7px 22px",
+  borderRadius: "10px",
+  fontWeight: 600,
   color: "#fff",
+  textDecoration: "none",
+  fontSize: "1.05rem",
+  border: "none"
 };
 
-export default function Navbar({ active = "Dashboard" }) {
-  const tabs = ["Dashboard", "Challenges", "Rewards", "Leaderboard", "Learn"];
+export default function Navbar() {
+  const location = useLocation();
+
   return (
     <nav style={navStyle}>
       {tabs.map(tab => (
-        <div
-          key={tab}
-          style={{
-            padding: "7px 22px",
-            borderRadius: "10px",
-            fontWeight: 600,
-            color: "#fff",
-            background: active === tab ? activeTab.background : "transparent",
-            boxShadow: active === tab ? "0 0 8px #6d28d9" : "none",
-            cursor: "pointer",
-            border: "none"
-          }}
+        <NavLink
+          key={tab.name}
+          to={tab.path}
+          style={({ isActive }) => ({
+            ...tabStyle,
+            background: isActive ? "#6d28d9" : "transparent",
+            boxShadow: isActive ? "0 0 8px #6d28d9" : "none",
+          })}
+          end={tab.path === "/"}
         >
-          {tab}
-        </div>
+          {tab.name}
+        </NavLink>
       ))}
     </nav>
   );
