@@ -1,92 +1,90 @@
-# Finance Bro Chatbot
+# StudentStash
 
-A finance-focused chatbot with a Gen Z bro style personality that answers only finance-related questions using hype slang and memes.  
-Powered by the WiroAI-Finance-Qwen-1.5B model from Hugging Face, served with a FastAPI backend and a React frontend.  
+StudentStash is an all-in-one student productivity and finance app designed to help users engage with challenges, learn investing, track rewards, and chat with a Gen-Z style finance bro chatbot! It combines a React frontend with a powerful Python FastAPI backend serving a custom-finance LLM chatbot built on the WiroAI model.
 
 ---
 
 ## Features
 
-- Download and host your own local WiroAI Finance model.
-- Bro-style Gen Z slang responses focused on real, responsible financial advice.
-- Easy React UI chatbot integrated with a FastAPI backend.
-- Cleaner, safer, and user-friendly conversations with prompt engineering and reply filtering.
-- CORS enabled backend for seamless frontend-backend communication.
-- Can be extended/deployed anywhere — local or cloud.
+- **Dashboard:** Overview of student progress and stats.
+- **Challenges:** Gamified challenges for student engagement.
+- **Challenge Details:** Drill down into individual challenges.
+- **Rewards:** Track earned rewards and incentives.
+- **Leaderboard:** See top students and their achievements.
+- **Investing:** Educational content and investing tracking tools.
+- **Learn:** Learning resources on finance and productivity.
+- **Finance Bro Chatbot:** Chat with a BroBot offering finance advice styled in Gen-Z slang, powered by a local Hugging Face model.
+- User authentication and theme switching (Gen-Z / Boomer modes).
+- Responsive React frontend with React Router navigation.
+- FastAPI backend with model serving and chat API.
 
 ---
 
 ## Project Structure
-
 StudentStash/
 ├── backend/
-│ ├── app.py # FastAPI backend serving chat API
-│ └── models/
-│ └── wiroai/ # Downloaded Hugging Face model files
+│ ├── app.py # FastAPI backend serving chatbot API
+│ ├── models/ # Folder for downloaded model(s)
+│ │ └── wiroai/ # Finance model files
+│ └── requirements.txt # Backend Python dependencies
 ├── frontend/
+│ ├── public/ # React public assets
 │ ├── src/
-│ │ ├── components/
-│ │ │ └── FinanceBroChatBot.js # React chat UI
-│ │ ├── pages/
-│ │ │ └── FinanceBro.js # Chatbot page wrapper
-│ │ └── App.js # React router and app layout
-│ ├── package.json # React dependencies & scripts
-│ └── ... # Other React config files
-└── .gitignore # Git ignore file
+│ │ ├── components/ # React components including FinanceBroChatBot
+│ │ ├── pages/ # Pages like Dashboard, FinanceBro, Investing, etc.
+│ │ ├── App.js # Main React app and routing
+│ │ ├── index.js # React entry point
+│ │ └── styles/ # CSS / SCSS files
+│ ├── package.json # Frontend dependencies and scripts
+│ └── .gitignore # Frontend gitignore
+├── .gitignore # Root gitignore combining frontend/backend ignores
 
-## Setup Instructions
-
-### Prerequisites
-
-- Python 3.10+
-- Node.js 16+ and npm/yarn
-- Git (for version control and cloning)
-- At least 8+ GB RAM recommended for model loading (CPU/GPU)
 
 ---
 
-### Backend Setup
+## Prerequisites
 
-1. Navigate to the backend folder:
+- Python 3.10+
+- Node.js 16+ and npm or yarn
+- Git
+- Minimum 8 GB RAM recommended for model loading.
+- Recommended: virtual environments for Python.
 
+---
+
+## Backend Setup
+
+1. Navigate to the backend directory:
 cd backend
-
-2. Create a Python environment (optional but recommended):
-
+2. (Optional, recommended) Create and activate a Python virtual environment:
 python -m venv .env
-
-Activate virtual env:
-source .env/bin/activate # Linux/macOS
-..env\Scripts\activate # Windows PowerShell
-
-3. Install required Python packages:
-
+source .env/bin/activate # Linux/ma
+3. Install backend dependencies:
 pip install -r requirements.txt
 
-If you don’t have `requirements.txt`, just run:
-
+If you don’t have `requirements.txt`, simply run:
 pip install fastapi uvicorn transformers torch
 
-4. Download the model files into `backend/models/wiroai` using the `huggingface_hub` CLI or Python script as described in your project.
+4. Download the WiroAI Finance model into `backend/models/wiroai` folder via Hugging Face CLI or scripts.
 
 5. Run the FastAPI backend server:
 
 python -m uvicorn app:app --host 0.0.0.0 --port 8000
+   The backend will serve the chatbot API at `http://localhost:8000/chat`.
 
-### Frontend Setup
+---
 
-1. Navigate to the frontend folder:
+## Frontend Setup
+
+1. Navigate to the frontend directory:
 
 cd ../frontend
-
-2. Install Node.js dependencies:
-
+2. Install frontend Node.js dependencies:
 npm install
-
 or
 yarn
 
-3. Start the React app:
+3. Start the React development server:
 
 npm start
 
@@ -97,42 +95,29 @@ yarn start
 
 http://localhost:3000/finance-bro
 
-to interact with your Finance Bro Chatbot!
+   to interact with your Finance Bro Chatbot!
 
+---
 
 ## Usage
 
-- Type your finance-related question in the chat UI.
-- BroBot responds with Gen Z style finance advice.
-- Non-finance questions get a friendly redirect message.
-- Works entirely locally; no external API calls after model download.
+- Use the sidebar or navbar to navigate pages like Challenges, Rewards, Investing, and Learn.
+- Visit `/finance-bro` to chat with the Gen-Z style Finance Bro Chatbot.
+- Login/Logout handled via authentication page.
+- Switch between GenZ and Boomer themes in the UI.
+- Challenges, rewards, and leaderboard pages allow student engagement and tracking.
+- FinanceBro chatbot provides lively financial advice through the backend model.
 
 ---
-
-## Notes & Tips
-
-- The React frontend calls `http://localhost:8000/chat` so ensure backend & frontend ports match CORS settings.
-- Adjust `app.py` CORS origins if running frontend on a different URL.
-- The model is large; expect some RAM and CPU usage during startup.
-- Extend few-shot prompts or fine-tune model to adjust style or domain further.
-- When deploying, exclude `/backend/models/wiroai` from git if large; download models separately in deployment.
-
----
-
-## License
-
-Specify your project license here (e.g., MIT License).
-
 ---
 
 ## Acknowledgments
 
-- [Hugging Face](https://huggingface.co/) for transformers and model hosting.
-- WiroAI team for the Finance-Qwen-1.5B model.
-- FastAPI and React open-source communities.
+- [Hugging Face](https://huggingface.co/) — transformers and model hosting  
+- WiroAI team for the WiroAI-Finance-Qwen-1.5B model  
+- FastAPI and React open-source communities  
 
 ---
-
 ## Contact
 
 For questions, issues, or feature requests, open an issue or contact [aryamansharma4810@gmail.com] & [jai19kharb@gmail.com].
