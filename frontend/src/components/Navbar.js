@@ -1,19 +1,26 @@
+import { useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { ThemeContext } from "../App";
 
 const navItems = [
   { name: "Dashboard", path: "/" },
   { name: "Challenges", path: "/challenges" },
   { name: "Rewards", path: "/rewards" },
   { name: "Leaderboard", path: "/leaderboard" },
+  { name: "Investing", path: "/investing" },
   { name: "Learn", path: "/learn" },
   { name: "Finance Bro", path: "/finance-bro" }
 ];
 
 export default function Navbar({ mode, toggleMode, logout, user }) {
   const location = useLocation();
-  const navBarBg = mode === "boomer" ? "#e9e6df" : "#18162b";
-  const accent = mode === "boomer" ? "#24446e" : "#a78bfa";
-  const navLinkActiveBg = mode === "boomer" ? "#dbeafe" : "#3d217e88";
+  const { theme } = useContext(ThemeContext);
+
+  const navBarBg = theme.card;
+  const accent = theme.highlight;
+  const navLinkActiveBg = mode === "boomer"
+    ? "#dbeafe"
+    : "#3d217e88";
 
   return (
     <nav
@@ -25,7 +32,7 @@ export default function Navbar({ mode, toggleMode, logout, user }) {
         position: "relative",
         height: "58px",
         background: navBarBg,
-        borderBottom: mode === "boomer" ? "1.5px solid #d9d5cb" : "none",
+        borderBottom: mode === "boomer" ? "1.5px solid #d9d5cb" : `2px solid ${theme.highlight}`,
         marginBottom: 22,
         fontFamily: "inherit"
       }}
@@ -53,7 +60,7 @@ export default function Navbar({ mode, toggleMode, logout, user }) {
           style={{
             width: "23px",
             height: "13px",
-            background: mode === "boomer" ? "#7ba7e1" : "#a78bfa",
+            background: mode === "boomer" ? "#7ba7e1" : accent,
             borderRadius: "7px",
             cursor: "pointer",
             position: "relative",
@@ -80,7 +87,6 @@ export default function Navbar({ mode, toggleMode, logout, user }) {
       {/* CENTER: Navigation Links */}
       <div style={{ display: "flex", gap: "20px" }}>
         {navItems.map(({ name, path }) => {
-          // Only highlight when the path matches exactly!
           const active = location.pathname === path;
           return (
             <Link
@@ -97,8 +103,9 @@ export default function Navbar({ mode, toggleMode, logout, user }) {
                 boxShadow: active
                   ? mode === "boomer"
                     ? "0 1.5px 7px #b6d0eb22"
-                    : "0 0 0 2px #a78bfa62"
+                    : `0 0 0 2px ${accent}62`
                   : "none",
+                borderBottom: active ? `2.3px solid ${theme.accent}` : "none",
                 transition: "box-shadow 0.16s, background 0.17s"
               }}
             >
@@ -129,10 +136,10 @@ export default function Navbar({ mode, toggleMode, logout, user }) {
           onClick={logout}
           style={{
             background: "transparent",
-            color: mode === "boomer" ? "#c23030" : "#a78bfa",
+            color: mode === "boomer" ? "#c23030" : accent,
             border: mode === "boomer"
               ? "1.2px solid #c23030"
-              : "1.08px solid #a78bfa",
+              : `1.08px solid ${accent}`,
             borderRadius: "7px",
             padding: "0.26rem 0.81rem",
             cursor: "pointer",

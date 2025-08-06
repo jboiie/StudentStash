@@ -1,333 +1,402 @@
-import React from "react";
+import React, { useContext, useState, useEffect } from "react";
+import { ThemeContext } from "../App";
 
-// Learning modules
-const modules = [
+// ---- "Study Missions" (all unique to here, all working links) ----
+const missions = [
   {
-    key: "saving",
-    title: "Saving Basics",
-    desc: "Learn the fundamentals of saving money",
-    icon: "💰",
-    info: "5 min · 4 lessons",
-    progress: 100,
-    status: "review",
-    link: "https://www.moneyhelper.org.uk/en/savings/types-of-savings/savings-tips"
+    title: "Level 1: How to Open a Student Bank Account",
+    desc: "Follow this step-by-step guide for Indian students—easy, no jargon.",
+    url: "https://www.hdfcbank.com/personal/resources/learning-centre/banking-basics/how-to-open-a-student-bank-account"
   },
   {
-    key: "budget",
-    title: "Budgeting 101",
-    desc: "Create and stick to your first budget",
-    icon: "📊",
-    info: "6 min · 5 lessons",
-    progress: 100,
-    status: "review",
-    link: "https://www.nerdwallet.com/uk/personal-finance/how-to-budget/"
+    title: "Level 2: What is UPI? The Ultimate Student Guide",
+    desc: "Learn how UPI payments work, find great tips for safety.",
+    url: "https://www.phonepe.com/blog/digital-payments/basics-of-upi/"
   },
   {
-    key: "emergency",
-    title: "Emergency Fund",
-    desc: "Why and how to build an emergency fund",
-    icon: "🚨",
-    info: "5 min · 5 lessons",
-    progress: 60,
-    status: "continue",
-    link: "https://www.investopedia.com/articles/pf/06/emergencyfund.asp"
+    title: "Level 3: Creating Your Monthly Budget With Google Sheets",
+    desc: "Hands-on, with free templates and a walkthrough video.",
+    url: "https://www.youtube.com/watch?v=NWI7GACrFQA"
   },
   {
-    key: "invest",
-    title: "Investment Basics",
-    desc: "Introduction to investing for beginners",
-    icon: "📈",
-    info: "8 min · 6 lessons",
-    progress: 0,
-    status: "locked",
-    link: "https://www.themotleyfool.com/investing/how-to-invest/stocks/"
+    title: "Level 4: The Magic of Compounding (Animated Demo)",
+    desc: "Why everyone says 'start early'; see the numbers come alive!",
+    url: "https://www.youtube.com/watch?v=JuWdrhKj2tw"
   },
   {
-    key: "student",
-    title: "Student Finance",
-    desc: "Managing money during college years",
-    icon: "🎓",
-    info: "7 min · 5 lessons",
-    progress: 0,
-    status: "locked",
-    link: "https://www.nationwide.co.uk/guides/manage-your-money/how-to-manage-money-at-university/"
+    title: "Level 5: Start Your First SIP Online",
+    desc: "Actual screenshot demo—how to start a SIP, what to look out for.",
+    url: "https://groww.in/p/sip/how-to-start-sip-online"
   }
 ];
 
-// All fresh, working tips:
-const dailyTips = [
+const learnResources = [
+  // Basics
   {
-    tip: "Start small – even ₹10 daily adds up to ₹3,650 annually!",
-    url: "https://www.cnbc.com/select/how-small-steps-can-help-you-save-more-money/"
+    tab: "Basics", icon: "📚",
+    title: "What Is a Mutual Fund?",
+    desc: "Understand how funds pool money—simple, with analogies.",
+    url: "https://groww.in/p/mutual-funds/what-are-mutual-funds"
   },
   {
-    tip: "Set specific savings goals rather than vague ones.",
-    url: "https://www.bankrate.com/banking/savings/how-to-set-savings-goals/"
+    tab: "Basics", icon: "💳",
+    title: "How Do Credit Cards Work?",
+    desc: "The difference between debit, credit, and why it's not free money.",
+    url: "https://www.moneycontrol.com/news/business/personal-finance/how-does-a-credit-card-work-find-out-here-3288231.html"
   },
   {
-    tip: "Automate your savings to make it effortless.",
-    url: "https://www.forbes.com/advisor/banking/automatic-savings/"
+    tab: "Basics", icon: "🏦",
+    title: "Bank Accounts 101",
+    desc: "Different types, best for students, safe online banking.",
+    url: "https://www.bankbazaar.com/saving-schemes/types-of-bank-accounts.html"
+  },
+  // Personal Finance
+  {
+    tab: "Personal Finance", icon: "💡",
+    title: "How to Budget as a Student",
+    desc: "Real-world ways to track money and make it last.",
+    url: "https://www.cnbctv18.com/personal-finance/student-budget-tips-15406241.htm"
   },
   {
-    tip: "Use apps to track expenses and savings.",
-    url: "https://www.businessinsider.in/tech/apps/news/best-expense-tracker-apps-in-india/articleshow/101573818.cms"
+    tab: "Personal Finance", icon: "💸",
+    title: "Why You Need Emergency Funds",
+    desc: "Starting early means less panic when things go wrong.",
+    url: "https://www.groww.in/p/learn/how-to-build-an-emergency-fund"
   },
   {
-    tip: "Join saving challenges for motivation.",
-    url: "https://www.moneycrashers.com/savings-challenge-ideas/"
+    tab: "Personal Finance", icon: "🧾",
+    title: "How to File Taxes (as a Young Adult)",
+    desc: "Demystifying the process, finding your forms—quick video, too.",
+    url: "https://cleartax.in/s/filing-income-tax-return-first-time"
+  },
+  // Investing
+  {
+    tab: "Investing", icon: "🌱",
+    title: "SIP vs. Lump Sum: Which is Better?",
+    desc: "Breakdown of returns, risk—interactive calculator included.",
+    url: "https://groww.in/calculators/sip-calculator"
+  },
+  {
+    tab: "Investing", icon: "💹",
+    title: "Index Funds: Why They Matter",
+    desc: "How the simplest fund historically beats most experts.",
+    url: "https://www.etmoney.com/learn/index-funds"
+  },
+  {
+    tab: "Investing", icon: "📈",
+    title: "How Does the Stock Market Work?",
+    desc: "Crash course with short YouTube explainer.",
+    url: "https://www.youtube.com/watch?v=p7HKvqRI_Bo"
+  },
+  // Career & Adulting
+  {
+    tab: "Career", icon: "🧑‍💻",
+    title: "How to Ace Your First Internship",
+    desc: "Checklist to impress your boss, even remotely.",
+    url: "https://www.indeed.com/career-advice/career-development/tips-first-internship"
+  },
+  {
+    tab: "Career", icon: "🏠",
+    title: "Understanding Rent, Deposits & Agreements",
+    desc: "What to check before you sign—India specific.",
+    url: "https://www.hdfc.com/blog/rent-agreement"
+  },
+  {
+    tab: "Career", icon: "💼",
+    title: "How to Make a Resume (Free Templates)",
+    desc: "Avoid classic errors, use good design templates.",
+    url: "https://www.canva.com/resumes/templates/"
   }
 ];
+
+const learnTabs = [
+  { label: "All", color: "#41fa8f" },
+  { label: "Basics", color: "#a78bfa" },
+  { label: "Personal Finance", color: "#fed661" },
+  { label: "Investing", color: "#47ddde" },
+  { label: "Career", color: "#feae6f" }
+];
+
+// --- Helper: key for user progress ---
+function getUser() {
+  return localStorage.getItem("studentstash_user") || "default";
+}
+
+// ---- Missions Progress Bar ----
+function MissionsProgressBar({ progress, total, theme }) {
+  const pct = Math.round((progress / total) * 100);
+  return (
+    <div style={{ width: "100%", height: 10, background: theme.card, borderRadius: 7, overflow: "hidden", margin: "7px 0 16px 0" }}>
+      <div
+        style={{
+          width: `${pct}%`,
+          height: "100%",
+          background: `linear-gradient(90deg,${theme.accent},${theme.highlight})`,
+          borderRadius: "8px",
+          transition: "width 0.31s"
+        }}
+      />
+    </div>
+  );
+}
+
+// ---- Category Progress Bar ----
+function CategoryProgressBar({ tab, theme, visited }) {
+  const tabResources = learnResources.filter(r => r.tab === tab);
+  const done = tabResources.filter(r => visited.includes(r.url)).length;
+  const pct = tabResources.length === 0 ? 0 : Math.round((done / tabResources.length) * 100);
+  return (
+    <div style={{ width: "100%", height: 9, background: theme.card, borderRadius: 6, overflow: "hidden", margin: "7px 0 10px 0" }}>
+      <div
+        style={{
+          width: `${pct}%`,
+          height: "100%",
+          background: learnTabs.find(t => t.label === tab)?.color || theme.accent,
+          borderRadius: 6,
+          transition: "width 0.31s"
+        }}
+      />
+    </div>
+  );
+}
 
 export default function Learn() {
-  const completeModules = modules.filter(m => m.progress === 100).length;
+  const { theme } = useContext(ThemeContext);
+  const userKey = `learn_progress_${getUser()}`;
+  const [activeTab, setActiveTab] = useState("All");
+  const [missionLevel, setMissionLevel] = useState(() =>
+    Number(localStorage.getItem(`learn_mission_${getUser()}`)) || 0
+  );
+  const [visited, setVisited] = useState(() =>
+    JSON.parse(localStorage.getItem(userKey) || "[]")
+  );
+
+  useEffect(() => {
+    localStorage.setItem(`learn_mission_${getUser()}`, missionLevel);
+  }, [missionLevel]);
+  useEffect(() => {
+    localStorage.setItem(userKey, JSON.stringify(visited));
+  }, [visited, userKey]);
+
+  function handleMissionClick(idx, m) {
+    if (idx > missionLevel) return;
+    window.open(m.url, "_blank", "noopener,noreferrer");
+    if (idx === missionLevel) setMissionLevel(idx + 1);
+  }
+
+  function handleResourceClick(url) {
+    if (!visited.includes(url)) setVisited([...visited, url]);
+  }
+
+  function resetProgress() {
+    if (!window.confirm("Reset all learning progress? This will clear your mission level and visited links.")) return;
+    setMissionLevel(0);
+    setVisited([]);
+    localStorage.removeItem(`learn_mission_${getUser()}`);
+    localStorage.removeItem(userKey);
+    alert("Learning progress reset successfully!");
+  }
+
+  const filtered = activeTab === "All"
+    ? learnResources
+    : learnResources.filter(r => r.tab === activeTab);
 
   return (
-    <div style={{
-      background: "#18162b",
-      minHeight: "100vh",
-      padding: "36px 0 36px",
-      fontFamily: "'Inter', 'Montserrat', Arial, sans-serif",
-    }}>
-      <div style={{ maxWidth: 650, margin: "0 auto" }}>
-        {/* Heading */}
-        <h1 style={{
-          color: "#a78bfa",
-          fontSize: "2rem",
-          fontWeight: 800,
-          textAlign: "center",
-          letterSpacing: ".01em"
-        }}>
-          Learn & Grow <span role="img" aria-label="book">📗</span>
-        </h1>
-        <div style={{
-          color: "#bdb9d0", fontSize: "1.13rem", fontWeight: 500,
-          textAlign: "center", marginBottom: 34
-        }}>
-          Build financial literacy one lesson at a time!
-        </div>
+    <div style={{ maxWidth: 980, margin: "0 auto", padding: "44px 13px 36px 13px", color: theme.text }}>
+      <h1 style={{
+        color: theme.highlight, fontWeight: 900, fontSize: "2.18rem",
+        letterSpacing: ".01em", marginBottom: 14
+      }}>
+        Learn <span role="img" aria-label="learning">📚</span>
+      </h1>
 
-        {/* Progress Bar (top) */}
-        <div style={{
-          background: "#232047",
-          borderRadius: 14,
-          padding: "1.1rem 1.7rem 1.15rem 1.2rem",
-          marginBottom: 32,
-          color: "#fff",
-          boxShadow: "0 1.2px 12px #a78bfa33"
-        }}>
-          <div style={{
-            fontWeight: 700,
-            fontSize: "1.09rem",
-            marginBottom: 7,
-            color: "#a78bfa",
-            letterSpacing: ".01em"
-          }}>
-            Your Learning Progress
-          </div>
-          <div style={{
-            color: "#b6b6db",
-            fontWeight: 500,
-            fontSize: ".97rem",
-            marginBottom: 10
-          }}>
-            Keep learning to unlock new features and earn bonus points!
-          </div>
-          {/* Progress bar */}
-          <div style={{
-            width: "100%",
-            background: "#312e81",
-            height: 10,
-            borderRadius: 7,
-            marginBottom: 7
-          }}>
-            <div style={{
-              width: `${(completeModules / modules.length) * 100}%`,
-              background: "linear-gradient(90deg,#a78bfa 10%,#41fa8f)",
-              height: 10,
-              borderRadius: 7,
-              transition: "width 0.6s"
-            }} />
-          </div>
-          <div style={{
-            color: "#67fcb6",
-            fontWeight: 700,
-            fontSize: ".99rem",
-            float: "right"
-          }}>
-            {completeModules}/{modules.length} Complete
-          </div>
-          <div style={{ clear: "both" }} />
-        </div>
+      {/* ============== Missions Progression Section ============== */}
+      <div style={{
+        background: theme.card,
+        border: `2px solid ${theme.highlight}`,
+        borderRadius: 15,
+        boxShadow: `0 2px 16px ${theme.highlight}18`,
+        padding: "1.5rem 2rem 1.2rem 2rem",
+        maxWidth: 680,
+        margin: "0 auto 34px auto",
+        position: "relative"
+      }}>
+        {/* Reset button in top-right corner */}
+        <button
+          onClick={resetProgress}
+          style={{
+            position: "absolute",
+            top: "1rem",
+            right: "1.5rem",
+            background: "transparent",
+            border: `1px solid ${theme.muted}`,
+            color: theme.muted,
+            borderRadius: "6px",
+            padding: "0.35rem 0.7rem",
+            fontSize: "0.85rem",
+            fontWeight: 600,
+            cursor: "pointer",
+            transition: "all 0.15s",
+            opacity: 0.7
+          }}
+          onMouseOver={(e) => {
+            e.target.style.opacity = "1";
+            e.target.style.borderColor = theme.highlight;
+            e.target.style.color = theme.highlight;
+          }}
+          onMouseOut={(e) => {
+            e.target.style.opacity = "0.7";
+            e.target.style.borderColor = theme.muted;
+            e.target.style.color = theme.muted;
+          }}
+          title="Reset all learning progress (for testing)"
+        >
+          🔄 Reset
+        </button>
 
-        {/* Modules */}
-        <div style={{ fontWeight: 800, color: "#f8ffbb", fontSize: "1.07rem", marginBottom: 12 }}>
-          <span role="img" aria-label="book">📚</span> Learning Modules
+        <div style={{ fontWeight: 800, color: theme.accent, fontSize: "1.12rem", marginBottom: 2 }}>
+          Study Missions <span role="img" aria-label="level up">🎮</span>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-          {modules.map(m => (
-            <div key={m.key} style={{
-              background: m.status === "locked" ? "#23213e" : "#202036",
-              borderRadius: 15,
-              boxShadow: m.status === "locked"
-                ? "none"
-                : "0 2px 24px 2px #a78bfa28",
-              padding: "1.25rem 1.6rem 1.21rem 1.4rem",
-              opacity: m.status === "locked" ? 0.6 : 1,
-              position: "relative",
-              marginBottom: 0,
-              border: m.status === "review" ? "2px solid #a78bfa" : "none"
-            }}>
-              <div style={{
-                display: "flex", gap: 17, alignItems: "center", marginBottom: 7
-              }}>
-                <span style={{ fontSize: "1.27rem" }}>{m.icon}</span>
-                <span style={{
-                  fontWeight: 700, color: "#fff", fontSize: "1.11rem", letterSpacing: ".01em"
-                }}>{m.title}</span>
-                <span style={{ fontSize: "1rem", color: "#a8ffea", fontWeight: 500, marginLeft: 12 }}>
-                  {m.info}
-                </span>
-              </div>
-              <div style={{
-                color: "#cfd0ff", fontWeight: 500,
-                marginLeft: 29, marginBottom: 7,
-                fontSize: ".98rem"
-              }}>{m.desc}</div>
-              <div style={{ marginLeft: 29, color: "#b6b6db", fontSize: ".99rem", marginBottom: 6 }}>
-                Progress
-              </div>
-              {/* Module progress bar */}
-              <div style={{
-                marginLeft: 29,
-                width: "85%",
-                background: "#312e81",
-                height: 8,
-                borderRadius: 5,
-                marginBottom: 13
-              }}>
-                <div style={{
-                  width: `${m.progress}%`,
-                  background: "linear-gradient(90deg,#a78bfa 10%,#41fa8f)",
-                  height: 8,
-                  borderRadius: 5,
-                  transition: "width 0.6s"
-                }} />
-              </div>
-              {/* Status/Button */}
-              {m.status === "continue" && (
-                <a
-                  href={m.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: "inline-block",
-                    fontWeight: 700,
-                    padding: ".5em 1.4em",
-                    borderRadius: 10,
-                    border: "none",
-                    background: "#41fa8f",
-                    color: "#18162b",
-                    fontSize: ".98rem",
-                    fontFamily: "inherit",
-                    textDecoration: "none",
-                    marginLeft: 29,
-                    marginTop: 7,
-                    boxShadow: "0 1.5px 8px #41fa8f33",
-                    transition: "background .14s"
-                  }}
-                >Continue</a>
-              )}
-              {m.status === "review" && (
-                <a
-                  href={m.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: "inline-block",
-                    fontWeight: 700,
-                    padding: ".5em 1.4em",
-                    borderRadius: 10,
-                    border: "none",
-                    background: "#a78bfa",
-                    color: "#18162b",
-                    fontSize: ".98rem",
-                    fontFamily: "inherit",
-                    textDecoration: "none",
-                    marginLeft: 29,
-                    marginTop: 7,
-                    boxShadow: "0 1.5px 8px #54468f22",
-                    transition: "background .14s"
-                  }}
-                >Review</a>
-              )}
-              {m.status === "locked" && (
-                <button disabled tabIndex={-1}
-                  style={{
-                    display: "inline-block",
-                    fontWeight: 700,
-                    padding: ".49em 1.35em",
-                    borderRadius: 10,
-                    border: "none",
-                    background: "#483b68",
-                    color: "#ccc",
-                    fontSize: ".97rem",
-                    marginLeft: 29,
-                    marginTop: 7,
-                    opacity: 0.7,
-                    cursor: "not-allowed"
-                  }}>
-                  Locked
-                </button>
-              )}
+        <div style={{ color: theme.muted, fontSize: ".99rem", marginBottom: 13 }}>
+          Unlock new lessons as you finish each level—your progress auto-saves!
+        </div>
+        <MissionsProgressBar progress={missionLevel} total={missions.length} theme={theme} />
+        <div>
+          {missions.map((m, idx) => (
+            <div key={m.title} style={{
+              background: idx < missionLevel ? theme.accent :
+                idx === missionLevel ? theme.highlight : theme.card,
+              color: idx < missionLevel
+                ? "#181a2d"
+                : idx === missionLevel
+                  ? "#232640"
+                  : theme.muted,
+              border: idx === missionLevel ? `2px solid ${theme.accent}` : "none",
+              borderRadius: 10,
+              padding: "1em 1.3em",
+              marginBottom: 13,
+              display: "flex", alignItems: "center",
+              boxShadow: idx === missionLevel ? "0 2px 9px #41fa8f16" : undefined,
+              cursor: idx <= missionLevel ? "pointer" : "not-allowed",
+              opacity: idx <= missionLevel ? 1 : 0.5,
+              fontWeight: idx === missionLevel ? 700 : 600,
+            }}
+              onClick={() => handleMissionClick(idx, m)}
+              title={idx > missionLevel ? "Unlock previous level first!" : "Open this lesson"}
+            >
+              <span>{m.title} &nbsp;
+                {idx < missionLevel
+                  ? <span role="img" aria-label="done">✅</span>
+                  : idx === missionLevel
+                    ? <span role="img" aria-label="now">👁️</span>
+                    : <span role="img" aria-label="lock">🔒</span>}
+              </span>
+              <span style={{ fontWeight: 400, fontSize: "1.01em", marginLeft: "0.75em" }}>{m.desc}</span>
             </div>
           ))}
         </div>
-        <div style={{ height: 15 }} />
+      </div>
 
-        {/* Daily Tips */}
-        <div style={{
-          marginTop: 4,
-          background: "#202036",
-          borderRadius: 13,
-          boxShadow: "0 1px 12px #77ffea0c",
-          padding: "1.15rem 1.1rem 1rem 1.25rem"
-        }}>
-          <div style={{
-            fontWeight: 700, color: "#ffe8b9", marginBottom: 11, fontSize: "1.1rem"
-          }}>
-            <span role="img" aria-label="bulb">💡</span> Daily Tips
+      {/* ============== Tabs ============== */}
+      <div style={{ display: "flex", gap: 16, marginBottom: 22, flexWrap: "wrap" }}>
+        {learnTabs.map(tab =>
+          <button
+            key={tab.label}
+            style={{
+              background: activeTab === tab.label ? tab.color : theme.card,
+              color: activeTab === tab.label ? "#191913" : tab.color,
+              border: `1.2px solid ${tab.color}`,
+              fontWeight: 700,
+              fontSize: ".98rem",
+              borderRadius: "8px",
+              padding: ".37em 1.25em",
+              cursor: "pointer",
+              transition: "background 0.16s, color 0.16s"
+            }}
+            onClick={() => setActiveTab(tab.label)}
+          >
+            {tab.label}
+          </button>
+        )}
+      </div>
+
+      {/* ============== Category Progress Bars ============== */}
+      <div style={{
+        display: "flex", gap: "17px", marginBottom: 17, flexWrap: "wrap", alignItems: "center"
+      }}>
+        {learnTabs.filter(t => t.label !== "All").map(t =>
+          <div key={t.label} style={{ minWidth: 115, flex: 1 }}>
+            <div style={{ color: t.color, fontWeight: 700, fontSize: ".97em", marginBottom: 5 }}>{t.label}</div>
+            <CategoryProgressBar tab={t.label} theme={theme} visited={visited} />
           </div>
-          <ul style={{
-            padding: 0, margin: 0, listStyle: "none", fontSize: ".98rem"
-          }}>
-            {dailyTips.map((tip, idx) => (
-              <li key={idx}
-                style={{
-                  background: "#292049",
-                  borderRadius: 7,
-                  padding: "8px 15px",
-                  color: "#fff",
-                  fontWeight: 600,
-                  marginBottom: 8
-                }}>
-                <a
-                  href={tip.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    color: "#41fa8f",
-                    textDecoration: "underline",
-                    fontWeight: 700,
-                    wordBreak: "break-word",
-                    transition: "color .13s"
-                  }}
-                >
-                  {tip.tip}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+        )}
+      </div>
+
+      {/* ============== Resource Cards ============== */}
+      <div style={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 23,
+        justifyContent: "center"
+      }}>
+        {filtered.map(res => (
+          <div key={res.title}
+            style={{
+              background: theme.card,
+              border: `2px solid ${learnTabs.find(t=>t.label === res.tab)?.color || theme.highlight}`,
+              borderRadius: 14,
+              boxShadow: `0 2px 10px ${(learnTabs.find(t=>t.label === res.tab)?.color || theme.accent)}18`,
+              padding: "1.14rem 1.3rem",
+              minWidth: 270, maxWidth: 312,
+              display: "flex", flexDirection: "column", alignItems: "flex-start",
+              marginBottom: 4
+            }}
+          >
+            <div style={{
+              fontSize: "1.45rem",
+              marginBottom: ".3em"
+            }}>{res.icon}</div>
+            <div style={{ fontWeight: 700, fontSize: "1.08rem", color: theme.text, marginBottom: 2 }}>
+              {res.title}
+            </div>
+            <div style={{ color: theme.muted, fontSize: ".98rem", marginBottom: 13 }}>
+              {res.desc}
+            </div>
+            <a
+              href={res.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => handleResourceClick(res.url)}
+              style={{
+                background: `linear-gradient(90deg,${learnTabs.find(t=>t.label===res.tab)?.color || theme.highlight},${theme.accent})`,
+                color: "#191a2d",
+                fontWeight: 700,
+                border: "none",
+                borderRadius: 8,
+                fontSize: "1.01rem",
+                padding: ".63em 1.05em",
+                textDecoration: "none",
+                transition: "background .14s"
+              }}
+            >
+              Learn more
+            </a>
+          </div>
+        ))}
+      </div>
+
+      <div style={{
+        color: theme.muted,
+        fontSize: ".97rem",
+        marginTop: 32,
+        background: theme.card,
+        borderRadius: 12,
+        padding: "1.1rem 1.45rem",
+        border: `1px solid ${theme.border}`,
+        maxWidth: 720,
+        marginLeft: "auto", marginRight: "auto"
+      }}>
+        All links above open in a new tab—your study progress is saved for every session. Finish your missions to unlock more knowledge!
       </div>
     </div>
   );
