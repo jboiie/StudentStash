@@ -23,21 +23,22 @@ StudentStash is an all-in-one student productivity and finance app designed to h
 ## Project Structure
 StudentStash/
 ├── backend/
-│ ├── app.py # FastAPI backend serving chatbot API
-│ ├── models/ # Folder for downloaded model(s)
-│ │ └── wiroai/ # Finance model files
-│ └── requirements.txt # Backend Python dependencies
+│   ├── app.py                 # FastAPI backend serving chatbot API
+│   ├── models/                # Folder for downloaded model(s)
+│   │    └── wiroai/           # Finance model files
+│   └── requirements.txt       # Backend Python dependencies
 ├── frontend/
-│ ├── public/ # React public assets
-│ ├── src/
-│ │ ├── components/ # React components including FinanceBroChatBot
-│ │ ├── pages/ # Pages like Dashboard, FinanceBro, Investing, etc.
-│ │ ├── App.js # Main React app and routing
-│ │ ├── index.js # React entry point
-│ │ └── styles/ # CSS / SCSS files
-│ ├── package.json # Frontend dependencies and scripts
-│ └── .gitignore # Frontend gitignore
-├── .gitignore # Root gitignore combining frontend/backend ignores
+│   ├── public/                # React public assets
+│   ├── src/
+│   │   ├── components/        # React components including FinanceBroChatBot
+│   │   ├── pages/             # Pages like Dashboard, FinanceBro, Investing, etc.
+│   │   ├── App.js             # Main React app and routing
+│   │   ├── index.js           # React entry point
+│   │   └── styles/            # CSS / SCSS files
+│   ├── package.json           # Frontend dependencies and scripts
+│   └── .gitignore             # Frontend gitignore
+├── .gitignore                 # Root gitignore combining frontend/backend ignores
+└── README.md                  # This file
 
 
 ---
