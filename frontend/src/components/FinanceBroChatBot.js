@@ -1,114 +1,209 @@
-import React, { useState, useEffect, useRef } from "react";
+// src/components/FinanceBroChatBot.js
+import React, { useState, useRef, useEffect } from "react";
 
-const broPhrases = [
-  "Bro, if you're not saving, you're missing the bull run!",
-  "To the moon, king! 🚀 Try that SIP strategy.",
-  "Passive income? More like aggressive wins, bro!",
-  "Real Gs don't wait for payday, they make paydays.",
-  "Stacks on stacks—compound that interest, legend!",
-  "Keep grinding, the market's gonna bless you soon!",
-  "Diversify bro, don’t put all eggs in one basket!",
-  "HODL tight, this is just a dip, trust me.",
-];
-
-export default function FinanceBroChatBot({ mode }) {
+export default function FinanceBroChatBot() {
   const [messages, setMessages] = useState([
     { from: "bot", text: "Yo bro! Ask me anything about stacking those savings." },
   ]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
   const chatEndRef = useRef(null);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  // Scroll to bottom on new message
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
-    const userMsg = { from: "user", text: input };
-    const botMsg = {
-      from: "bot",
-      text: broPhrases[Math.floor(Math.random() * broPhrases.length)],
-    };
+  // Function to send the user message to backend API and get BroBot reply
+  async function sendMessageToApi(text) {
+    try {
+      const response = await fetch("http://localhost:8000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text }),
+      });
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data.reply;
+    } catch (error) {
+      console.error("Backend call failed:", error);
+      return "Bro, I’m having a server issue. Hit it up in a bit!";
+    }
+  }
 
-    setMessages((msgs) => [...msgs, userMsg, botMsg]);
+  // Handle sending a message when user clicks send or presses enter
+  const handleSend = async () => {
+    if (!input.trim() || loading) return; // Prevent sending empty or multiple requests
+
+    const userInput = input.trim();
+    setMessages((msgs) => [...msgs, { from: "user", text: userInput }]);
     setInput("");
+    setLoading(true);
+
+    const botReply = await sendMessageToApi(userInput);
+    setMessages((msgs) => [...msgs, { from: "bot", text: botReply }]);
+    setLoading(false);
   };
 
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  // Send on Enter key press
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
 
   return (
     <div
       style={{
-        border: `2px solid ${mode === "boomer" ? "#24446e" : "violet"}`,
-        padding: 10,
-        borderRadius: 10,
-        maxWidth: 400,
-        backgroundColor: mode === "boomer" ? "#f0f0e6" : "#111",
-        color: mode === "boomer" ? "#24446e" : "white",
+        maxWidth: 700,
+        minWidth: 340,
+        width: "94vw",
+        height: "70vh",
+        margin: "0 auto",
+        padding: 24,
+        background: "#242046",
+        borderRadius: 22,
+        color: "#fafafd",
+        boxShadow: "0 6px 32px 0 #1a172f1a",
         display: "flex",
         flexDirection: "column",
       }}
+      aria-label="Finance Bro Chatbot"
     >
       <div
         style={{
-          height: 300,
-          overflowY: "auto",
-          marginBottom: 10,
-          backgroundColor: mode === "boomer" ? "#e3e6e1" : "#222",
-          padding: 10,
-          borderRadius: 8,
-          flexGrow: 1,
+          textAlign: "center",
+          fontWeight: 700,
+          fontSize: 24,
+          marginBottom: 9,
+          userSelect: "none",
         }}
+      >
+        Finance Bro Chat
+      </div>
+      <div
+        style={{
+          textAlign: "center",
+          color: "#aab0fa",
+          fontSize: 14,
+          marginBottom: 15,
+          userSelect: "none",
+        }}
+      >
+        Friendly financial advice, Gen-Z style.
+      </div>
+
+      {/* Chat messages container */}
+      <div
+        style={{
+          flex: 1,
+          overflowY: "auto",
+          padding: "2px 12px 0 12px",
+          marginBottom: 10,
+          background: "#161534",
+          borderRadius: 13,
+          border: "1.5px solid #31305a",
+        }}
+        aria-live="polite"
       >
         {messages.map((msg, idx) => (
           <div
             key={idx}
             style={{
-              textAlign: msg.from === "bot" ? "left" : "right",
-              margin: "5px 0",
+              display: "flex",
+              justifyContent: msg.from === "user" ? "flex-end" : "flex-start",
+              margin: "8px 0",
             }}
           >
-            <b style={{ color: msg.from === "bot" ? (mode === "boomer" ? "#24446e" : "violet") : (mode === "boomer" ? "#5a7dbb" : "orange") }}>
-              {msg.from === "bot" ? "BroBot" : "You"}:
-            </b>{" "}
-            {msg.text}
+            <div
+              style={{
+                background: msg.from === "user" ? "#4338ca" : "#31305a",
+                color: msg.from === "user" ? "white" : "#aab0fa",
+                padding: "11px 16px",
+                borderRadius: 16,
+                maxWidth: "78%",
+                fontWeight: 500,
+                fontSize: 16,
+                whiteSpace: "pre-wrap",
+                boxShadow:
+                  msg.from === "user"
+                    ? "0 3px 14px 0 #4338ca77"
+                    : "0 2px 8px 0 #222244aa",
+                lineHeight: 1.5,
+              }}
+              role={msg.from === "bot" ? "textbox" : undefined}
+              aria-label={
+                msg.from === "bot" ? "BroBot response" : "User message"
+              }
+            >
+              {msg.from === "bot" && <span style={{ marginRight: 7 }}>🕶️ </span>}
+              {msg.text}
+            </div>
           </div>
         ))}
-        <div ref={chatEndRef} />
+        <div ref={chatEndRef}></div>
       </div>
 
-      <div style={{ display: "flex" }}>
-        <input
+      {/* Input box and send button */}
+      <div style={{ display: "flex", gap: 10 }}>
+        <textarea
+          aria-label="Type your message here"
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          disabled={loading}
+          rows={1}
           placeholder="Ask me bro stuff..."
           style={{
-            width: "calc(100% - 70px)",
-            marginRight: 10,
-            padding: 8,
-            fontSize: 14,
-            borderRadius: 6,
-            border: `1.5px solid ${mode === "boomer" ? "#24446e" : "violet"}`,
-            backgroundColor: mode === "boomer" ? "white" : "#222",
-            color: mode === "boomer" ? "#24446e" : "white",
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleSend();
+            flex: 1,
+            padding: "13px 15px",
+            borderRadius: 12,
+            border: "none",
+            fontSize: 16,
+            outline: "none",
+            background: "#31305a",
+            color: "#fafafd",
+            resize: "none",
           }}
         />
         <button
           onClick={handleSend}
+          disabled={loading || !input.trim()}
           style={{
-            padding: "6px 18px",
-            backgroundColor: mode === "boomer" ? "#24446e" : "violet",
+            backgroundColor: loading ? "#7269c6" : "#4338ca",
             color: "white",
-            borderRadius: 6,
             border: "none",
-            cursor: "pointer",
+            borderRadius: 12,
+            padding: "0 24px",
+            fontSize: 16,
+            cursor: loading || !input.trim() ? "not-allowed" : "pointer",
             fontWeight: "bold",
+            userSelect: "none",
           }}
+          aria-label="Send message"
         >
-          Send
+          {loading ? "..." : "Send"}
         </button>
+      </div>
+
+      {/* Loading indicator */}
+      <div
+        style={{
+          minHeight: 18,
+          color: "#aab0fa",
+          fontSize: 13,
+          marginTop: 8,
+          textAlign: "center",
+          userSelect: "none",
+        }}
+        aria-live="polite"
+      >
+        {loading ? "BroBot is thinking..." : ""}
       </div>
     </div>
   );

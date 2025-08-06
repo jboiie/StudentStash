@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useState, createContext, useContext } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
@@ -6,7 +5,7 @@ import Challenges from "./pages/Challenges";
 import ChallengeDetail from "./pages/ChallengeDetail";
 import Rewards from "./pages/Rewards";
 import Leaderboard from "./pages/Leaderboard";
-import Investing from "./pages/Investing"; // <-- ADD THIS LINE
+import Investing from "./pages/Investing";
 import Learn from "./pages/Learn";
 import FinanceBro from "./pages/FinanceBro";
 import Navbar from "./components/Navbar";
@@ -65,7 +64,7 @@ export default function App() {
 
 function MainRouter({ user, setUser, logout }) {
   const location = useLocation();
-  const { mode, theme, toggleMode } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
 
   if (!user && location.pathname === "/login") {
     return <Login setUser={setUser} />;
@@ -83,7 +82,7 @@ function MainRouter({ user, setUser, logout }) {
         transition: "background 0.3s"
       }}
     >
-      <Navbar mode={mode} toggleMode={toggleMode} logout={logout} user={user} />
+      <Navbar mode={useContext(ThemeContext).mode} toggleMode={useContext(ThemeContext).toggleMode} logout={logout} user={user} />
       <div style={{ maxWidth: 1000, margin: "0 auto", paddingTop: 20 }}>
         <Routes>
           <Route path="/" element={<Dashboard user={user} />} />
@@ -91,11 +90,11 @@ function MainRouter({ user, setUser, logout }) {
           <Route path="/challenges/:id" element={<ChallengeDetail user={user} />} />
           <Route path="/rewards" element={<Rewards user={user} />} />
           <Route path="/leaderboard" element={<Leaderboard user={user} />} />
-          <Route path="/investing" element={<Investing user={user} />} /> {/* <-- ADD THIS LINE */}
+          <Route path="/investing" element={<Investing user={user} />} />
           <Route path="/learn" element={<Learn user={user} />} />
           <Route path="/finance-bro" element={<FinanceBro user={user} />} />
-          <Route path="/login" element={<Navigate to="/" />} />
-          <Route path="*" element={<Navigate to="/" />} />
+          <Route path="/login" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
     </div>
