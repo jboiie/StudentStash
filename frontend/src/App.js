@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// src/App.js
+import React, { useState, createContext, useContext } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Challenges from "./pages/Challenges";
@@ -7,41 +8,64 @@ import Rewards from "./pages/Rewards";
 import Leaderboard from "./pages/Leaderboard";
 import Investing from "./pages/Investing"; // <-- ADD THIS LINE
 import Learn from "./pages/Learn";
-import Login from "./pages/Login";
 import FinanceBro from "./pages/FinanceBro";
+import Navbar from "./components/Navbar";
+import Login from "./pages/Login";
 
-function App() {
-  // Theme & user state
+const THEME_COLORS = {
+  genz: {
+    background: "#18162b",
+    card: "#202036",
+    highlight: "#a78bfa",
+    accent: "#41fa8f",
+    border: "#a78bfa",
+    text: "#fff",
+    muted: "#b6b6db",
+    badgeLocked: "#2d2d46"
+  },
+  boomer: {
+    background: "#181511",
+    card: "#21201d",
+    highlight: "#e7ddca",
+    accent: "#f5e8d6",
+    border: "#a69979",
+    text: "#ede8df",
+    muted: "#a69979",
+    badgeLocked: "#7a6d52"
+  }
+};
+
+export const ThemeContext = createContext();
+
+export default function App() {
   const [mode, setMode] = useState(localStorage.getItem("mode") || "genz");
   const [user, setUser] = useState(localStorage.getItem("studentstash_user") || "");
   const theme = THEME_COLORS[mode];
 
-  const toggleMode = () => {
+  function toggleMode() {
     const nextMode = mode === "genz" ? "boomer" : "genz";
     setMode(nextMode);
     localStorage.setItem("mode", nextMode);
+    document.body.style.background = THEME_COLORS[nextMode].background;
   }
 
-  const logout = () => {
+  function logout() {
     localStorage.removeItem("studentstash_user");
     setUser("");
-  };
+  }
 
   return (
-    <Router>
-      <MainRouter
-        user={user}
-        setUser={setUser}
-        mode={mode}
-        toggleMode={toggleMode}
-        logout={logout}
-      />
-    </Router>
+    <ThemeContext.Provider value={{ mode, theme, toggleMode }}>
+      <Router>
+        <MainRouter user={user} setUser={setUser} logout={logout} />
+      </Router>
+    </ThemeContext.Provider>
   );
 }
 
-function MainRouter({ user, setUser, mode, toggleMode, logout }) {
+function MainRouter({ user, setUser, logout }) {
   const location = useLocation();
+  const { mode, theme, toggleMode } = useContext(ThemeContext);
 
   if (!user && location.pathname === "/login") {
     return <Login setUser={setUser} />;
@@ -54,27 +78,22 @@ function MainRouter({ user, setUser, mode, toggleMode, logout }) {
     <div
       style={{
         minHeight: "100vh",
-        background: mode === "boomer" ? "#f4f2ee" : "#18162b",
-        color: mode === "boomer" ? "#272727" : "#fff",
+        background: theme.background,
+        color: theme.text,
         transition: "background 0.3s"
       }}
     >
-      <Navbar
-        mode={mode}
-        toggleMode={toggleMode}
-        logout={logout}
-        user={user}
-      />
+      <Navbar mode={mode} toggleMode={toggleMode} logout={logout} user={user} />
       <div style={{ maxWidth: 1000, margin: "0 auto", paddingTop: 20 }}>
         <Routes>
-          <Route path="/" element={<Dashboard mode={mode} user={user} />} />
-          <Route path="/challenges" element={<Challenges mode={mode} user={user} />} />
-          <Route path="/challenges/:id" element={<ChallengeDetail mode={mode} user={user} />} />
-          {/* HERE: Pass user prop to Rewards */}
-          <Route path="/rewards" element={<Rewards mode={mode} user={user} />} />
-          <Route path="/leaderboard" element={<Leaderboard mode={mode} user={user} />} />
-          <Route path="/learn" element={<Learn mode={mode} user={user} />} />
-          <Route path="/finance-bro" element={<FinanceBro mode={mode} user={user} />} />
+          <Route path="/" element={<Dashboard user={user} />} />
+          <Route path="/challenges" element={<Challenges user={user} />} />
+          <Route path="/challenges/:id" element={<ChallengeDetail user={user} />} />
+          <Route path="/rewards" element={<Rewards user={user} />} />
+          <Route path="/leaderboard" element={<Leaderboard user={user} />} />
+          <Route path="/investing" element={<Investing user={user} />} /> {/* <-- ADD THIS LINE */}
+          <Route path="/learn" element={<Learn user={user} />} />
+          <Route path="/finance-bro" element={<FinanceBro user={user} />} />
           <Route path="/login" element={<Navigate to="/" />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
