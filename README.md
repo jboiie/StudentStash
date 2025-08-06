@@ -21,6 +21,7 @@ StudentStash is an all-in-one student productivity and finance app designed to h
 ---
 
 ## Project Structure
+```
 StudentStash/
 ├── backend/
 │   ├── app.py                 # FastAPI backend serving chatbot API
@@ -39,7 +40,7 @@ StudentStash/
 │   └── .gitignore             # Frontend gitignore
 ├── .gitignore                 # Root gitignore combining frontend/backend ignores
 └── README.md                  # This file
-
+```
 
 ---
 
