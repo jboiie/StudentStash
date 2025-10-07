@@ -1,4 +1,4 @@
-# StudentStash
+# StudentStash 
 
 StudentStash is an all-in-one student productivity and finance app designed to help users engage with challenges, learn investing, track rewards, and chat with a Gen-Z style finance bro chatbot! It combines a React frontend with a powerful Python FastAPI backend serving a custom-finance LLM chatbot built on the WiroAI model.
 
